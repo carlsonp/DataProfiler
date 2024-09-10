@@ -305,11 +305,16 @@ class ColumnPrimitiveTypeProfileCompiler(
         """
         Find the selected data_type in a primitive compiler.
 
-        :return: name of the selected data type
+        :return: name of the selected data type (datetime, int, float, string, etc.)
         :rtype: str
         """
         matched_profile: str | None = None
         if self._profiles:
+            # default to certain datatypes over others
+            for datatype in ['datetime', 'string', 'float', 'int']:
+                if datatype in self._profiles.keys() and self._profiles[datatype].datatype_ratio == 1.0:
+                    return datatype
+            # otherwise, look across all
             for key, profiler in self._profiles.items():
                 if matched_profile is None and profiler.data_type_ratio == 1.0:
                     matched_profile = key
